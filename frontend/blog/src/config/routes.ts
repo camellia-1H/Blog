@@ -1,12 +1,12 @@
 export const routes = {
   home: "/",
-  profile: "/@:nickname",
-  profileLink: (nickname : string) => `/@${nickname}`,
+  profile: "/:userid",
+  profileLink: (userid : string) => `/@${userid}`,
   upload: "/upload",
   search: "/search",
   login: "/login",
   register: "/register",
-  post: "/@:nickname/post/:id",
-  // postLink: (post : string) => `/@${post.user.nickname}/videos/${content.id}`,
+  post: "/:userid/post/:postid",
+  postLink: (userid : string, postid : string) => `/@${userid}/post/${postid}`,
   // comment: "/videos/:id/comments",
 };

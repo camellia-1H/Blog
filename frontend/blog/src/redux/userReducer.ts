@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { AnyAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 import { User } from "../models/User";
@@ -7,7 +7,7 @@ import { config } from "../config";
 
 const initialState = {
   user: {} as User,
-  accessToken: "" as any,
+  // message: "",
 };
 
 const userSlice = createSlice({
@@ -15,13 +15,15 @@ const userSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
+    // login sai nhưng từ pending vẫn chuyển sang fullfill
+    // builder.addCase(userLogin.pending, (state, action) => {
+    //   state.message = action.payload as any;
+    // });
     builder.addCase(userLogin.fulfilled, (state, action) => {
       state.user = action.payload;
-      state.accessToken = action.payload?.accessToken;
     });
     builder.addCase(userLogout.fulfilled, (state, action) => {
       state.user = {} as User;
-      state.accessToken = action.payload;
     });
   },
 });
@@ -33,9 +35,11 @@ export const userLogin = createAsyncThunk(
       const res = await axios.post("http://localhost:8080/auth/login", data);
       return res.data;
     } catch (e) {
-      console.log(e);
+      if (axios.isAxiosError(e)) {
+        return e.response?.data;
+      }
     }
-  },
+  }
 );
 
 export const userLogout = createAsyncThunk(
@@ -49,7 +53,7 @@ export const userLogout = createAsyncThunk(
     } catch (error) {
       console.log(error);
     }
-  },
+  }
 );
 
 export default userSlice.reducer;

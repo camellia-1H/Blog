@@ -7,9 +7,12 @@ const postController = {
   getAllPost: async (req: Request, res: Response) => {
     try {
       const allPost = await prisma.post.findMany({
-        orderBy : {
-          updateAt : 'desc'
-        }
+        where: {
+          published: true,
+        },
+        orderBy: {
+          updateAt: "desc",
+        },
       });
       return res.status(200).json(allPost);
     } catch (error) {
@@ -18,12 +21,12 @@ const postController = {
   },
   uploadPost: async (req: Request, res: Response) => {
     try {
-      const { title, content, authEmail } = req.body;
+      const { title, content, authEmail, published } = req.body;
       const newPost = await prisma.post.create({
         data: {
           title,
           content,
-          published: false,
+          published,
           author: {
             connect: {
               email: authEmail,
@@ -52,39 +55,51 @@ const postController = {
   },
   updatePost: async (req: Request, res: Response) => {
     try {
-        const { id, userid } = req.params;
-        console.log(userid );
-        
-        const {title, content, published} = req.body
-        const post = await prisma.post.update({
-          where: {
-            id,
-          },
-          data : {
-            title,
-            content,
-            published : Boolean(published)
-          }
-          }
-        )
-        return res.status(200).json(post);
-      } catch (error) {
-        console.log(error); 
-        return res.status(400).json(error);
-      }
+      const { id, userid } = req.params;
+      console.log(userid);
+
+      const { title, content, published } = req.body;
+      const post = await prisma.post.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+          content,
+          published: Boolean(published),
+        },
+      });
+      return res.status(200).json(post);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json(error);
+    }
   },
   getPostById: async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
-        const post = await prisma.post.findUnique({
-          where: {
-            id,
-          },
-        });
-        return res.status(200).json(post);
-      } catch (error) {
-        return res.status(400).json(error);
-      }
+      const { id } = req.params;
+      const post = await prisma.post.findUnique({
+        where: {
+          id,
+        },
+      });
+      return res.status(200).json(post);
+    } catch (error) {
+      return res.status(400).json(error);
+    }
+  },
+  getPostsByUserId: async (req: Request, res: Response) => {
+    try {
+      const { userid } = req.params;
+      const post = await prisma.post.findMany({
+        where: {
+          authorId: userid,
+        },
+      });
+      return res.status(200).json(post);
+    } catch (error) {
+      return res.status(400).json(error);
+    }
   },
 
   filterPostBySearchString: async (req: Request, res: Response) => {},

@@ -9,10 +9,10 @@ type Props = {
 
 const PostItem = ({ post }: Props) => {
   const authorId = post.authorId as string;
-  const { data } = useGetProfileUserQuery(authorId);
+  const { data: userData } = useGetProfileUserQuery(authorId);
   return (
     // postLink
-    <Link to={config.routes.post}>
+    <Link to={config.routes.postLink(authorId, post.id)}>
       <article className="flex-col lg:mb-10 md:mb-16 sm:mb-16 sm:w-12/12">
         <div className="rounded-3xl overflow-hidden">
           <img src={post.thumbnail} alt="" />
@@ -39,7 +39,7 @@ const PostItem = ({ post }: Props) => {
           <div className="flex flex-1 items-center mt-6">
             <div className="mr-3">
               <img
-                src={data?.avatar}
+                src={userData?.avatar}
                 alt=""
                 width={40}
                 height={40}
@@ -47,7 +47,7 @@ const PostItem = ({ post }: Props) => {
               />
             </div>
             <div className="flex-col">
-              <h2 className=" font-semibold">{data?.name}</h2>
+              <h2 className=" font-semibold">{userData?.name}</h2>
               <p className="text-sm opacity-70">Director</p>
             </div>
           </div>

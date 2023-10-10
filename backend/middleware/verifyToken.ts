@@ -9,8 +9,11 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
   const refreshToken = req.cookies.refreshToken as string;
   if (token) {
     const accessToken = token.split(" ")[1];
+    
     jwt.verify(accessToken, "daylakeymahoaaccessToken", (err) => {
       if (err) {
+        console.log(err);
+        
         return res.status(403).json("Token not valid or expired");
         // jwt.verify(refreshToken, "daylakeymahoarefreshToken", (err, user) => {
         //   if (err) {
@@ -48,7 +51,7 @@ const verifyTokenAndAuthorization = (
       },
     });
 
-    if (result?.authorId == req.params.userid) {
+    if (result?.authorId == userid) {
       next();
     } else {
       return res.status(403).json("You not allow to do");

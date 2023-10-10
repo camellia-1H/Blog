@@ -1,10 +1,18 @@
 import { Link } from "react-router-dom";
 import { config } from "../../config";
+import { Post } from "../../models/Post";
+import { User } from "../../models/User";
 
-const PostSearch: React.FC = () => {
+type Props = {
+  post: Post;
+  isAuthor: boolean;
+  dataUser: User;
+};
+
+const PostSearch = ({ post, isAuthor, dataUser }: Props) => {
   return (
     <div className="py-5 border-t-2">
-      <Link to={config.routes.post}>
+      <Link to={config.routes.postLink(post.authorId as string, post.id)}>
         <div className="flex items-start">
           <div className="w-2/12">
             <img
@@ -14,13 +22,17 @@ const PostSearch: React.FC = () => {
             />
           </div>
           <div className="ml-3 flex-1">
-            <h3 className="lg:text-2xl md:sm:text-xl">Post Title</h3>
-            <h2>Tom Cook</h2>
+            <h3 className="lg:text-2xl md:sm:text-xl">{post.title}</h3>
+            <h2>{dataUser?.name}</h2>
           </div>
-          <div className="justify-items-end">
-            <button className="hover:underline mr-3">edit</button>
-            <button className="hover:underline">delete</button>
-          </div>
+          {isAuthor ? (
+            <div className="justify-items-end">
+              <button className="hover:underline mr-3">edit</button>
+              <button className="hover:underline">delete</button>
+            </div>
+          ) : (
+            <div></div>
+          )}
         </div>
       </Link>
     </div>

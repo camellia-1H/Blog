@@ -9,7 +9,7 @@ const createAxiosJWT = () => {
   axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig<any>) => {
       const accessToken = useSelector(
-        (state: RootState) => state.user.accessToken,
+        (state: RootState) => state.user.user.accessToken,
       );
       try {
         // const jwtObj = jwt.verify(accessToken, "daylakeymahoaaccessToken");

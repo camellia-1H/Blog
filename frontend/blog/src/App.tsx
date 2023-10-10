@@ -4,8 +4,12 @@ import { Route, Routes } from "react-router-dom";
 import DefaultLayout from "./layouts/DefaultLayout/DefaultLayout";
 import { publicRoutes, privateRoutes } from "./routes";
 import Loader from "./components/Loader";
+import ProtectedRoute from "./components/ProtectRoute/ProtectRouter";
+import { useSelector } from "react-redux";
+import { RootState } from "./redux/store";
 
 function App() {
+  const user = useSelector((state: RootState) => state.user.user);
   return (
     <div className="bg-white">
       <Suspense fallback={<Loader />}>
@@ -36,7 +40,9 @@ function App() {
                 path={route.path}
                 element={
                   <DefaultLayout>
-                    <Page />
+                    <ProtectedRoute user={user}>
+                      <Page />
+                    </ProtectedRoute>
                   </DefaultLayout>
                 }
               ></Route>

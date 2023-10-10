@@ -6,9 +6,7 @@ import PostItem from "./PostItem";
 import { useGetAllPostQuery } from "../redux/postApi";
 
 const PostList: React.FC = () => {
-  const userid = "6513eb8ba64cabe396d7f0d4";
-  const { data } = useGetAllPostQuery(userid);
-  console.log(data);
+  const { data } = useGetAllPostQuery();
 
   return (
     <Wrapper>

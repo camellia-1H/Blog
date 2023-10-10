@@ -44,7 +44,7 @@ const Header: React.FC = () => {
               <FontAwesomeIcon icon={faUpload} className="mr-2" />
               Upload
             </Link>
-            <Link to={config.routes.profile} className="ml-3">
+            <Link to={config.routes.profileLink(user.id)} className="ml-3">
               <img
                 src="https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/305773309_1517947871982881_6840332658496567178_n.jpg?stp=dst-jpg_s320x320&_nc_cat=111&ccb=1-7&_nc_sid=fe8171&_nc_ohc=RroxTTsRaYkAX9va3Y6&_nc_ht=scontent.fhan2-4.fna&_nc_e2o=f&oh=00_AfDyoo2gR6q1v_J_PKmTeQRaKSJv9_WtwAREjfQ3Uvhsvw&oe=65148B91"
                 alt=""

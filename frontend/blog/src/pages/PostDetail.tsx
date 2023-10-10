@@ -1,13 +1,27 @@
-import { FC, useState } from "react";
-import { Link } from "react-router-dom";
+import { FC } from "react";
+import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { config } from "../config";
 
 import Wrapper from "../components/Core/Wrapper";
+import { useGetPostByIdQuery } from "../redux/postApi";
+import { useGetProfileUserQuery } from "../redux/userApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 
 const PostDetail: FC = () => {
-  const [isAuthor, setIsAuthor] = useState<boolean>(true);
+  const params = useParams();
+  const user = useSelector((state: RootState) => state.user.user);
+  // params.x , x phải đúng trong config router : userid, postidc
+  const { userid, postid } = params;
+  console.log(userid);
+
+  const { data: postData } = useGetPostByIdQuery(postid as string);
+  const { data: authorData } = useGetProfileUserQuery(userid as string);
+
+  const isAuthor = user.id == userid;
+
   return (
     <>
       <div className="flex flex-wrap">
@@ -16,16 +30,16 @@ const PostDetail: FC = () => {
             <Link to={"/"} className="text-sm hover:underline">
               <FontAwesomeIcon icon={faAngleLeft} />
               <span className="ml-2 text-blue-500">Home</span> /{" "}
-              <span>Post Title</span>
+              <span>{postData?.title}</span>
             </Link>
             <div className="flex items-center justify-between pt-3">
-              <h1 className="text-3xl font-bold">Post Title</h1>
+              <h1 className="text-3xl font-bold">{postData?.content}</h1>
               <button className="text-sm text-black font-medium bg-gray-300/10 hover:bg-gray-400/10 p-1 rounded-lg">
                 Category
               </button>
             </div>
             <div>
-              <Link to={config.routes.profile}>
+              <Link to={config.routes.profileLink(params.userid as string)}>
                 <div className="flex flex-1 items-center mt-6">
                   <div className="mr-3 overflow-hidden">
                     <img
@@ -36,9 +50,9 @@ const PostDetail: FC = () => {
                       className="rounded-full"
                     />
                   </div>
-                  <h2 className="font-semibold">Tom Cook</h2>
+                  <h2 className="font-semibold">{authorData?.name}</h2>
                   <span className="ml-1">on</span>
-                  <span className="ml-1">Time</span>
+                  <span className="ml-1">Time dang loi chua chuyen duoc</span>
                 </div>
               </Link>
             </div>
@@ -52,31 +66,7 @@ const PostDetail: FC = () => {
             </div>
             <div className="max-h-max flex-col flex-1">
               <p className="text-base font-light text-justify">
-                Cupiditate maiores ullam eveniet adipisci in doloribus nulla
-                minus. Voluptas iusto libero adipisci rem et corporis. Nostrud
-                sint anim sunt aliqua. Nulla eu labore irure incididunt velit
-                cillum quis magna dolore. Cupiditate maiores ullam eveniet
-                adipisci in doloribus nulla minus. Voluptas iusto libero
-                adipisci rem et corporis. Nostrud sint anim sunt aliqua. Nulla
-                eu labore irure incididunt velit cillum quis magna dolore.
-                Cupiditate maiores ullam eveniet adipisci in doloribus nulla
-                minus. Voluptas iusto libero adipisci rem et corporis. Nostrud
-                sint anim sunt aliqua. Nulla eu labore irure incididunt velit
-                cillum quis magna dolore. Cupiditate maiores ullam eveniet
-                adipisci in doloribus nulla minus. Voluptas iusto libero
-                adipisci rem et corporis. Nostrud sint anim sunt aliqua. Nulla
-                eu labore irure incididunt velit cillum quis magna dolore.
-                Cupiditate maiores ullam eveniet adipisci in doloribus nulla
-                minus. Voluptas iusto libero adipisci rem et corporis. Nostrud
-                sint anim sunt aliqua. Nulla eu labore irure incididunt velit
-                cillum quis magna dolore. Cupiditate maiores ullam eveniet
-                adipisci in doloribus nulla minus. Voluptas iusto libero
-                adipisci rem et corporis. Nostrud sint anim sunt aliqua. Nulla
-                eu labore irure incididunt velit cillum quis magna dolore.
-                Cupiditate maiores ullam eveniet adipisci in doloribus nulla
-                minus. Voluptas iusto libero adipisci rem et corporis. Nostrud
-                sint anim sunt aliqua. Nulla eu labore irure incididunt velit
-                cillum quis magna dolore.
+                {postData?.content}
               </p>
             </div>
           </Wrapper>

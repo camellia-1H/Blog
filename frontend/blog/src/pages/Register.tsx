@@ -85,7 +85,7 @@ const Register: FC = () => {
           <p className="mt-10 text-center text-sm text-gray-500">
             Bạn đã có tài khoản ? {"    "}
             <Link
-              to={config.routes.register}
+              to={config.routes.login}
               className="text-blue-500 font-bold hover:underline"
             >
               Login

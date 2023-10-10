@@ -1,36 +1,25 @@
-import { FC, FormEvent, useEffect, useState } from "react";
+import { FC, FormEvent, useState } from "react";
 import { config } from "../config";
-import { Link } from "react-router-dom";
-import { RootState, useTypedDispatch } from "../redux/store";
+import { Link, useNavigate } from "react-router-dom";
+import { useTypedDispatch } from "../redux/store";
 import { userLogin } from "../redux/userReducer";
-import { useSelector } from "react-redux";
 
 const Login: FC = () => {
-  // const [login, { isError, isSuccess }] = useLoginMutation();
-  const userInfo = useSelector((state: RootState) => state.user.user);
-  console.log(userInfo);
-
   const dispatch = useTypedDispatch();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
-  useEffect(() => {});
+  const [isError, setIsError] = useState<boolean>(false);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    dispatch(userLogin({ email, password }));
-
-    // const user = await login({
-    //   email,
-    //   password,
-    // });
-    // console.log(user);
-
-    // if (isSuccess) {
-    //   navigate("/");
-    // }
+    const result = await dispatch(userLogin({ email, password }));
+    if (result.payload?.id) {
+      navigate("/");
+    } else {
+      setIsError(true);
+    }
   };
   return (
     <>
@@ -89,7 +78,11 @@ const Login: FC = () => {
                 />
               </div>
             </div>
-
+            {isError && (
+              <div className="text-red-400 text-xl">
+                Sai ten tai khoan hoac mat khau
+              </div>
+            )}
             <div>
               <button
                 type="submit"
@@ -99,11 +92,7 @@ const Login: FC = () => {
               </button>
             </div>
           </form>
-          {/* {isError && (
-            <div className="text-red-400 text-2xl">
-              Sai ten tai khoan hoac mat khau
-            </div>
-          )} */}
+
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
             <Link

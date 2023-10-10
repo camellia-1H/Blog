@@ -13,14 +13,6 @@ const Register = lazy(() => import("../pages/Register"));
 const Upload = lazy(() => import("../pages/Upload"));
 const NotFound = lazy(() => import("../pages/NotFound"));
 
-// import Home from '../pages/Home';
-// import Profile from '../pages/Profile';
-// import PostDetail from '../pages/PostDetail';
-// import Login from '../pages/Login';
-// import Register from '../pages/Register';
-// import Upload from '../pages/Upload';
-// import NotFound from '../pages/NotFound';
-
 // Public routes
 const publicRoutes = [
   { path: config.routes.home, component: Home },
