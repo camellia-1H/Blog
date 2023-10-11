@@ -1,19 +1,17 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Post } from "../models/Post";
 import { RootState } from "./store";
-// import { useSelector } from "react-redux";
-// import { RootState } from "./store";
 
 export const postApi = createApi({
   reducerPath: "postApi", // ten field trong redux state
-  tagTypes: ["Post"],
+  tagTypes: ["Posts", "post"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:8080/",
     prepareHeaders: (headers, { getState }) => {
       const accessToken = (getState() as RootState).user.user.accessToken;
       if (accessToken) {
         headers.set("authorization", `Bearer ${accessToken}`);
-        headers.set('content-type','application/json; charset=utf-8')
+        // headers.set('content-type','application/json; charset=utf-8')
       }
       return headers;
     },
@@ -22,10 +20,12 @@ export const postApi = createApi({
     //query<kiểu trả về, tham số truyền vào>
     getAllPost: build.query<Post[], void>({
       query: () => `post`,
-      providesTags: ["Post"],
+      providesTags: ["Posts"],
+      keepUnusedDataFor : 5000
     }),
     getPostById: build.query<Post, string>({
       query: (postid) => `post/${postid}`,
+      providesTags: ["post"],
     }),
     getPostByUserId: build.query<Post[], string>({
       query: (userid) => `user/${userid}/post`,
@@ -35,10 +35,18 @@ export const postApi = createApi({
       query: (data) => ({
         url: "post/upload",
         method: "POST",
-        body: JSON.stringify(data),
+        body: data, // body tự convert sang json
         // headers: { Authorization: `Bearer ${accessToken}` },
       }),
-      invalidatesTags: ["Post"],
+      invalidatesTags: ["Posts"],
+    }),
+    updatePost: build.mutation({
+      query: ({ userid, postid, ...data }) => ({
+        url: `user/${userid}/post/${postid}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["post"],
     }),
   }),
 });
@@ -48,4 +56,5 @@ export const {
   useGetPostByIdQuery,
   useGetPostByUserIdQuery,
   useCreatePostMutation,
+  useUpdatePostMutation,
 } = postApi;

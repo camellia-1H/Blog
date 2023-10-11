@@ -11,12 +11,12 @@ const Upload: FC = () => {
   const [content, setContent] = useState<string>("");
   const [published, setPublished] = useState<boolean>(true);
   const authEmail = useSelector((state: RootState) => state.user.user.email);
-  const [uploadPost, {}] = useCreatePostMutation();
+  const [uploadPostMutation, {}] = useCreatePostMutation();
 
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      await uploadPost({
+      await uploadPostMutation({
         title,
         content,
         published,

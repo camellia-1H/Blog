@@ -1,26 +1,36 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import { config } from "../config";
+import { useState } from "react";
 
+import { config } from "../config";
 import Wrapper from "../components/Core/Wrapper";
 import { useGetPostByIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
+import { convertId } from "../utils/convertId";
+import ModalEditPost from "../components/ModalEditPost";
 
 const PostDetail: FC = () => {
   const params = useParams();
   const user = useSelector((state: RootState) => state.user.user);
-  // params.x , x phải đúng trong config router : userid, postidc
-  const { userid, postid } = params;
-  console.log(userid);
+  // params.x , x phải đúng trong config router : userid, postid
+  const { postid } = params;
 
+  const userid = convertId(params.userid as string);
   const { data: postData } = useGetPostByIdQuery(postid as string);
-  const { data: authorData } = useGetProfileUserQuery(userid as string);
+  const { data: authorData } = useGetProfileUserQuery(userid);
+  console.log(postData);
 
   const isAuthor = user.id == userid;
+
+  /// modal edit post nếu đó là auth user
+
+  const [modalIsOpen, setOpenModal] = useState<boolean>(false);
+  const handleCloseModal = () => setOpenModal(false);
+  const handleShowModal = () => setOpenModal(true);
 
   return (
     <>
@@ -43,7 +53,7 @@ const PostDetail: FC = () => {
                 <div className="flex flex-1 items-center mt-6">
                   <div className="mr-3 overflow-hidden">
                     <img
-                      src="https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/305773309_1517947871982881_6840332658496567178_n.jpg?stp=dst-jpg_s320x320&_nc_cat=111&ccb=1-7&_nc_sid=fe8171&_nc_ohc=RroxTTsRaYkAX9va3Y6&_nc_ht=scontent.fhan2-4.fna&_nc_e2o=f&oh=00_AfDyoo2gR6q1v_J_PKmTeQRaKSJv9_WtwAREjfQ3Uvhsvw&oe=65148B91"
+                      src={authorData?.avatar}
                       alt=""
                       width={40}
                       height={40}
@@ -74,8 +84,16 @@ const PostDetail: FC = () => {
         <div className="lg:w-2/12 lg:pl-3 md:w-full sm:w-full border-l-2 h-fit">
           {isAuthor ? (
             <div>
-              <button className="hover:underline mr-3">edit</button>
-              <button className="hover:underline">delete</button>
+              <button
+                className="ml-4 flex-1 bg-blue-500 hover:bg-blue-500/90
+              font-medium text-white rounded-md px-3 py-1 hover:underline mr-3"
+                onClick={handleShowModal}
+              >
+                Edit
+              </button>
+              <button className="flex-1 bg-transparent font-medium rounded-md px-3 py-1 ring-1 ring-gray-900/5 hover:bg-gray-400/10">
+                Delete
+              </button>
               <p className="opacity-50">
                 nếu là user chính đăng nhập thì có thể sửa, xóa
               </p>
@@ -94,6 +112,11 @@ const PostDetail: FC = () => {
           <Post /> */}
         </div>
       </div>
+      <ModalEditPost
+        modalIsOpen={modalIsOpen}
+        handleCloseModal={handleCloseModal}
+        post={postData}
+      ></ModalEditPost>
     </>
   );
 };
