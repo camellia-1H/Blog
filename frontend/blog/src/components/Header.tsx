@@ -13,7 +13,7 @@ const Header: React.FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
 
   return (
-    <header className="fixed lg:px-60 md:px-20 sm:px-20 py-4 top-0 right-0 left-0 bg-white border-b-2 border-blue-400/10">
+    <header className="fixed lg:px-60 md:px-20 sm:px-20 py-4 top-0 right-0 left-0 bg-white border-b-2 border-blue-400/10 z-50">
       <nav className="flex justify-between items-center">
         <Link to={"/"} className="text-3xl align-text-top">
           Logo

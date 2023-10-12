@@ -48,7 +48,7 @@ const postController = {
           id,
         },
       });
-      return res.status(200).json(post);
+      return res.status(200).json('Delete post successfully');
     } catch (error) {
       return res.status(400).json(error);
     }

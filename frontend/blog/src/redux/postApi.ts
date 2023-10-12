@@ -46,8 +46,15 @@ export const postApi = createApi({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["post"],
+      invalidatesTags: ["post",'Posts'],
     }),
+    deletePost: build.mutation({
+      query: ({ userid, postid }) => ({
+        url: `user/${userid}/post/${postid}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ['Posts'],
+    })
   }),
 });
 
@@ -57,4 +64,5 @@ export const {
   useGetPostByUserIdQuery,
   useCreatePostMutation,
   useUpdatePostMutation,
+  useDeletePostMutation
 } = postApi;

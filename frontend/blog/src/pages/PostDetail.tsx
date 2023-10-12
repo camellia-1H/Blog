@@ -1,12 +1,12 @@
 import { FC, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 import { config } from "../config";
 import Wrapper from "../components/Core/Wrapper";
-import { useGetPostByIdQuery } from "../redux/postApi";
+import { useDeletePostMutation, useGetPostByIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -15,6 +15,7 @@ import ModalEditPost from "../components/ModalEditPost";
 
 const PostDetail: FC = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user.user);
   // params.x , x phải đúng trong config router : userid, postid
   const { postid } = params;
@@ -24,6 +25,8 @@ const PostDetail: FC = () => {
   const { data: authorData } = useGetProfileUserQuery(userid);
   console.log(postData);
 
+  const [deletePostMutation] = useDeletePostMutation();
+
   const isAuthor = user.id == userid;
 
   /// modal edit post nếu đó là auth user
@@ -31,6 +34,15 @@ const PostDetail: FC = () => {
   const [modalIsOpen, setOpenModal] = useState<boolean>(false);
   const handleCloseModal = () => setOpenModal(false);
   const handleShowModal = () => setOpenModal(true);
+  const handleDeletePost = async () => {
+    try {
+      await deletePostMutation({ userid, postid });
+      alert("Delete post successfully");
+      navigate("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <>
@@ -91,7 +103,10 @@ const PostDetail: FC = () => {
               >
                 Edit
               </button>
-              <button className="flex-1 bg-transparent font-medium rounded-md px-3 py-1 ring-1 ring-gray-900/5 hover:bg-gray-400/10">
+              <button
+                className="flex-1 bg-transparent font-medium rounded-md px-3 py-1 ring-1 ring-gray-900/5 hover:bg-gray-400/10"
+                onClick={handleDeletePost}
+              >
                 Delete
               </button>
               <p className="opacity-50">
