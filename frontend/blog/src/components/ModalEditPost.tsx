@@ -1,7 +1,7 @@
 import { FormEvent, useState } from "react";
 import ReactModal from "react-modal";
 import { Post } from "../models/Post";
-import { useGetPostByIdQuery, useUpdatePostMutation } from "../redux/postApi";
+import { useUpdatePostMutation } from "../redux/postApi";
 
 const customStyles = {
   pointerEvents: "none",

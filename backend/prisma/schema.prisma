@@ -15,7 +15,7 @@ model User {
   email    String  @unique
   password String
   name     String
-  avatar   String? @default("https://scontent.fhan2-4.fna.fbcdn.net/v/t39.30808-1/305773309_1517947871982881_6840332658496567178_n.jpg?stp=dst-jpg_s320x320&_nc_cat=111&ccb=1-7&_nc_sid=fe8171&_nc_ohc=RroxTTsRaYkAX9va3Y6&_nc_ht=scontent.fhan2-4.fna&_nc_e2o=f&oh=00_AfDyoo2gR6q1v_J_PKmTeQRaKSJv9_WtwAREjfQ3Uvhsvw&oe=65148B91")
+  avatar   String? @default("https://yt3.ggpht.com/sIxY4CV7ZlkqfKAB-LR2xxR6IzHqwVvsxWewKYmzjcyDZ1pOjHfmn4NF-vVB2HKx5lfHB4OjdQ=s88-c-k-c0x00ffffff-no-nd-rj")
   posts    Post[]
 }
 

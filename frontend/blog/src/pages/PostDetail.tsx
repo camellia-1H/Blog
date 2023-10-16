@@ -36,9 +36,14 @@ const PostDetail: FC = () => {
   const handleShowModal = () => setOpenModal(true);
   const handleDeletePost = async () => {
     try {
-      await deletePostMutation({ userid, postid });
-      alert("Delete post successfully");
-      navigate("/");
+      const result = await deletePostMutation({ userid, postid });
+      console.log(result);
+      if ("error" in result) {
+        alert(`Delete post unsuccessfull`);
+      } else {
+        alert("Delete post successfully");
+        navigate("/");
+      }
     } catch (error) {
       console.log(error);
     }
@@ -127,11 +132,13 @@ const PostDetail: FC = () => {
           <Post /> */}
         </div>
       </div>
-      <ModalEditPost
-        modalIsOpen={modalIsOpen}
-        handleCloseModal={handleCloseModal}
-        post={postData}
-      ></ModalEditPost>
+      {postData && (
+        <ModalEditPost
+          modalIsOpen={modalIsOpen}
+          handleCloseModal={handleCloseModal}
+          post={postData}
+        ></ModalEditPost>
+      )}
     </>
   );
 };

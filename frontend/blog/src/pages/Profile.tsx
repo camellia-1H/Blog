@@ -7,7 +7,6 @@ import { userLogout } from "../redux/userReducer";
 import PostSearch from "../components/Search/PostSearch";
 import { useGetPostByUserIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
-import { User } from "../models/User";
 import { convertId } from "../utils/convertId";
 
 const Profile: FC = () => {
@@ -59,16 +58,9 @@ const Profile: FC = () => {
           </h1>
         )}
       </div>
-      <div className="lg:w-7/12 md:w-7/12 sm:w-7/12">
+      <div className="lg:w-7/12 md:w-7/12 sm:w-8/12 pl-2">
         {posts?.map((post, index) => {
-          return (
-            <PostSearch
-              post={post}
-              key={index}
-              isAuthor={isAuthor}
-              dataUser={dataUser as User}
-            />
-          );
+          return <PostSearch post={post} key={index} isAuthor={isAuthor} />;
         })}
       </div>
     </div>

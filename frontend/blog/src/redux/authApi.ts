@@ -13,14 +13,19 @@ export const authApi = createApi({
         body : data
       }),
     }),
-    register: build.query<User, void>({
-      query: () => `auth/register`,
+    register: build.mutation<User, Partial<User>>({
+      query: (data) => ({
+        url : `auth/register`,
+        method : 'POST',
+        body : data
+      })
     }),
-    logout: build.query<User, void>({
-      query: () => `auth/login`,
-    }),
+    
+    // logout: build.query<User, void>({
+    //   query: () => `auth/login`,
+    // }),
    
   }),
 });
 
-export const {useLoginMutation} = authApi
+export const {useLoginMutation, useRegisterMutation} = authApi
