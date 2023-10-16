@@ -16,7 +16,8 @@ const authController = {
       });
 
       if (existUser) {
-        throw Error("User da duoc dang ki");
+        // throw Error("User da duoc dang ki");
+        res.status(400).json("User da duoc dang ky")
       }
 
       // const hashPassword = await bcrypt.hash(

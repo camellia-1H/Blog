@@ -1,8 +1,34 @@
-import { FC } from "react";
+import { FC, FormEvent, useState } from "react";
 import { config } from "../config";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterMutation } from "../redux/authApi";
 
 const Register: FC = () => {
+  const navigate = useNavigate();
+
+  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<boolean>(false);
+
+  const [registerUserMutation] = useRegisterMutation();
+
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    try {
+      const result = await registerUserMutation({
+        name: username,
+        email,
+        password,
+      }).unwrap();
+      if (result.id) {
+        navigate("/login");
+      }
+    } catch (error) {
+      setError(true);
+    }
+  };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -13,7 +39,7 @@ const Register: FC = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" action="#" method="POST">
+          <form className="space-y-6" onSubmit={handleRegister}>
             <div>
               <label
                 htmlFor="username"
@@ -28,6 +54,7 @@ const Register: FC = () => {
                   type="text"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => setUsername(e.target.value)}
                 />
               </div>
             </div>
@@ -47,6 +74,7 @@ const Register: FC = () => {
                   autoComplete="email"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
             </div>
@@ -68,9 +96,18 @@ const Register: FC = () => {
                   autoComplete="current-password"
                   required
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
             </div>
+
+            {error ? (
+              <div className="text-xl text-red-500">
+                User đã được đăng ký.<br></br>Vui lòng chọn email khác
+              </div>
+            ) : (
+              <></>
+            )}
 
             <div>
               <button
