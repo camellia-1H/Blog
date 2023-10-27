@@ -12,22 +12,12 @@ const createAxiosJWT = () => {
       const accessToken = useSelector(
         (state: RootState) => state.user.user.accessToken
       );
-
-      const user = useSelector((state: RootState) => state.user.user);
-      // jwt.verify(accessToken, "daylakeymahoaaccessToken");
-      const decodeToken = jwt_decode<JwtPayload>(accessToken);
-      let date = new Date();
-      console.log(decodeToken);
-      if ((decodeToken.exp as number) < date.getTime() / 1000) {
-        const resultRefreshToken = await refreshToken();
-        const newUser = {
-          ...user,
-          accessToken: resultRefreshToken.accessToken,
-        };
-        console.log(newUser);
+      try {
+        // const jwtObj = jwt.verify(accessToken, "daylakeymahoaaccessToken");
+        // console.log(jwtObj);
         
-        config.headers["Authorization"] = `Bearer ${resultRefreshToken.accessToken}`;
-      }
+        // const isExpire = Date.now() >= jwtObj.exp
+    } catch (error) {}
       return config;
     },
     (err) => {
@@ -37,15 +27,4 @@ const createAxiosJWT = () => {
   return axiosInstance;
 };
 
-const refreshToken = async () => {
-  try {
-    const res = await axios.post("http://localhost:8080/auth/refresh", {
-      withCredentials: true,
-    });
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-export const axiosJWT = createAxiosJWT();
+export const axiosJWT = createAxiosJWT()
