@@ -5,22 +5,23 @@ import { useUpdatePostMutation } from "../redux/postApi";
 
 const customStyles = {
   pointerEvents: "none",
-  overlay: { zIndex: 10 },
+  overlay: { zIndex: 100 },
   content: {
     inset: "50% auto auto 50%",
     minWidth: "700px",
-    // innerHeightHeight: '550',
-    // maxHeight: 'min((100vh - 96px) - 40px, 734px)',
-    // maxHeight: '630px',
+    // innerHeight: "550",
+    maxHeight: "min((100vh - 96px) - 40px, 600px)",
+    // maxHeight: "630px",
     top: "40%",
     left: "50%",
     right: "auto",
     bottom: "auto",
     // marginRight: "-50%",
-    transition: "all 5s",
+    transition: "all 1s",
     transform: "translate(-50%, -50%)",
-    borderRadius: "15px",
+    borderRadius: "8px",
     overFlowY: "hidden",
+    // overFlow: "auto",
   },
 };
 type Props = {
@@ -37,8 +38,23 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
   const [title, setTitle] = useState<string>(post?.title);
   const [content, setContent] = useState<string>(post?.content);
   const [published, setPublished] = useState<boolean>(post?.published);
+  // const [image, setImage] = useState<string>(post?.thumbnail);
+  const [previewImage, setPreviewImage] = useState<string>("");
 
   const [updatePostMutation] = useUpdatePostMutation();
+
+  const setFileTobase = (file: File) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setPreviewImage(reader.result as string);
+    };
+  };
+  const onFileChange = (e: any) => {
+    const currentFile = e.target.files[0];
+    setFileTobase(currentFile);
+    console.log(currentFile);
+  };
 
   const handleEditPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,6 +65,7 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
         title,
         content,
         published,
+        previewImage,
       });
       handleCloseModal();
     } catch (error) {
@@ -69,7 +86,7 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
           </button>
         </div>
         <form
-          className="mx-auto mt-16 max-w-xl sm:mt-20"
+          className="mx-auto mt-12 max-w-xl sm:mt-8"
           onSubmit={handleEditPost}
         >
           <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
@@ -91,38 +108,41 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
                 />
               </div>
             </div>
-            {/* <div className="sm:col-span-2">
+            <div className="flex-col">
+              <div className="block text-md font-semibold leading-6 text-gray-900">
+                Thumbnail
+              </div>
+              <div className="px-2 flex items-center ">
+                <img
+                  src={post?.thumbnail}
+                  className="block w-full max-h-52"
+                ></img>
                 <label
-                  htmlFor="email"
-                  className="block font-semibold leading-6 text-gray-900 text-2xl"
+                  htmlFor="file-upload2"
+                  className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500 hover:underline mx-2"
                 >
-                  Chỗ này để xử lý úp ảnh thumbnail
+                  <span>Change</span>
+                  <input
+                    type="file"
+                    id="file-upload2"
+                    name="file-upload2"
+                    accept=".jpg,.jpeg,.png,.tiff,.heic,.webp"
+                    className="sr-only"
+                    width={20}
+                    height={20}
+                    onChange={onFileChange}
+                  />
                 </label>
-                <div className="col-span-full">
-                  <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                    <div className="text-center">
-                      <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                        <label
-                          htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                        >
-                          <span>Upload a file</span>
-                          <input
-                            id="file-upload"
-                            name="file-upload"
-                            type="file"
-                            className="sr-only"
-                          />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs leading-5 text-gray-600">
-                        PNG, JPG, GIF up to 10MB
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div> */}
+
+                {previewImage && (
+                  <img
+                    src={previewImage}
+                    width={304}
+                    className="block w-full max-h-52"
+                  ></img>
+                )}
+              </div>
+            </div>
 
             <div className="sm:col-span-2">
               <label

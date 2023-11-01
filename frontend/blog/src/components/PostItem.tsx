@@ -15,7 +15,7 @@ const PostItem = ({ post }: Props) => {
     <Link to={config.routes.postLink(authorId, post.id)}>
       <article className="flex-col lg:mb-10 md:mb-16 sm:mb-16 sm:w-12/12">
         <div className="rounded-3xl overflow-hidden">
-          <img src={post.thumbnail} alt="" />
+          <img src={post.thumbnail} className="block w-full max-h-72" alt="" />
         </div>
         <div className="flex-col py-2">
           <div className="flex items-center justify-between">

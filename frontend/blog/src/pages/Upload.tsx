@@ -5,15 +5,29 @@ import { useCreatePostMutation } from "../redux/postApi";
 import { useNavigate } from "react-router-dom";
 
 const Upload: FC = () => {
+  const authEmail = useSelector((state: RootState) => state.user.user.email);
+
   const navigate = useNavigate();
 
   const [title, setTitle] = useState<string>("");
   const [content, setContent] = useState<string>("");
   const [published, setPublished] = useState<boolean>(true);
-  const authEmail = useSelector((state: RootState) => state.user.user.email);
-  console.log(authEmail);
+  const [image, setImage] = useState<string>("");
 
   const [uploadPostMutation, {}] = useCreatePostMutation();
+
+  const setFileTobase = (file: File) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setImage(reader.result as string);
+    };
+  };
+  const onFileChange = (e: any) => {
+    const currentFile = e.target.files[0];
+    setFileTobase(currentFile);
+    console.log(currentFile);
+  };
 
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -23,6 +37,7 @@ const Upload: FC = () => {
         content,
         authEmail,
         published,
+        image,
       });
       navigate("/");
     } catch (error) {
@@ -70,39 +85,69 @@ const Upload: FC = () => {
               />
             </div>
           </div>
+
           <div className="sm:col-span-2">
-            <label
-              htmlFor="email"
-              className="block font-semibold leading-6 text-gray-900 text-2xl"
-            >
+            <label className="block font-semibold leading-6 text-gray-900 text-2xl">
               Chỗ này để xử lý úp ảnh thumbnail
             </label>
-            <div className="col-span-full">
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
-                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                    <label
-                      htmlFor="file-upload"
-                      className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
-                    >
-                      <span>Upload a file</span>
-                      <input
-                        id="file-upload"
-                        name="file-upload"
-                        type="file"
-                        className="sr-only"
-                      />
-                    </label>
-                    <p className="pl-1">or drag and drop</p>
+            {!image && (
+              <div className="col-span-full">
+                <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
+                  <div className="text-center">
+                    <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                      <label
+                        htmlFor="file-upload"
+                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500"
+                      >
+                        <span>Upload a file</span>
+                        <input
+                          id="file-upload"
+                          name="file-upload"
+                          type="file"
+                          accept=".jpg,.jpeg,.png,.tiff,.heic,.webp"
+                          className="sr-only"
+                          onChange={onFileChange}
+                        />
+                      </label>
+                      <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-xs leading-5 text-gray-600">
+                      PNG, JPG, GIF up to 10MB
+                    </p>
                   </div>
-                  <p className="text-xs leading-5 text-gray-600">
-                    PNG, JPG, GIF up to 10MB
-                  </p>
                 </div>
               </div>
-            </div>
-          </div>
+            )}
 
+            {image && (
+              <div className="w-96 h-full">
+                <div className="flex items-center">
+                  <div className="justify-items-end">
+                    <p className="font-medium text-md py-3">Preview image</p>
+                    <div className="flex items-center ">
+                      <img src={image} width={304} height={200}></img>
+                      <label
+                        htmlFor="file-upload2"
+                        className="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 focus-within:ring-indigo-600 focus-within:ring-offset-2 hover:text-indigo-500 hover:underline ml-4"
+                      >
+                        <span>Change</span>
+                        <input
+                          type="file"
+                          id="file-upload2"
+                          name="file-upload2"
+                          accept=".jpg,.jpeg,.png,.tiff,.heic,.webp"
+                          className="sr-only"
+                          width={20}
+                          height={20}
+                          onChange={onFileChange}
+                        />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           <div className="sm:col-span-2">
             <label
               htmlFor="content"

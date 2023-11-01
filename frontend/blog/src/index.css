@@ -8,11 +8,24 @@
   box-sizing: border-box;
 }
 
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+}
+
+/* Handle */
 ::-webkit-scrollbar-thumb {
-  visibility: hidden !important;
-  background: rgba(22, 24, 35, 0.06);
-  overscroll-behavior-y: contain;
-  overflow-x: hidden;
-  overflow-y: auto;
-  /* perspective-origin: right; */
+  background: #fef3f3;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #ededed;
 }
