@@ -1,0 +1,16 @@
+{
+    "verson" : 1,
+    "name" : "blog",
+    "builds" : [
+        {
+        "src": "index.ts",
+        "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src":"/(.*)",
+            "dest": "/index.ts"
+        }
+    ]
+}
