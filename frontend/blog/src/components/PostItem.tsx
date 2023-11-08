@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { config } from "../config";
 import { Post } from "../models/Post";
 import { useGetProfileUserQuery } from "../redux/userApi";
+import moment from "moment";
 
 type Props = {
   post: Post;
@@ -10,19 +11,33 @@ type Props = {
 const PostItem = ({ post }: Props) => {
   const authorId = post.authorId as string;
   const { data: userData } = useGetProfileUserQuery(authorId);
+  const date = moment(
+    post.createAt != post.updateAt ? post.updateAt : post.createAt
+  ).format("h:mm a, MMMM Do YYYY");
+
+  // cái này định để làm là kiểu đăng cách mấy phút trước gì đấy ...
+  const newDate = moment().format("h:mm a, MMMM Do YYYY");
+
+  // console.log(post.updateAt);
+
   return (
     // postLink
     <Link to={config.routes.postLink(authorId, post.id)}>
       <article className="flex-col lg:mb-10 md:mb-16 sm:mb-16 sm:w-12/12">
         <div className="rounded-3xl overflow-hidden">
-          <img src={post.thumbnail} className="block w-full max-h-72" alt="" />
+          <img
+            src={post.thumbnail}
+            className="block w-full lg:h-44 sm:max-h-80"
+            alt=""
+          />
         </div>
         <div className="flex-col py-2">
           <div className="flex items-center justify-between">
             <div>
               <span className="text-sm text-gray-500">
                 {/* {post.updateAt.getDay().toString()} */}
-                {post.id}
+                {post.createAt != post.updateAt ? "Updated" : "Created"} at{" "}
+                {date}
               </span>
             </div>
             <div>

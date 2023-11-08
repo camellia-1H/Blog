@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import moment from "moment";
 
 import { config } from "../config";
 import Wrapper from "../components/Core/Wrapper";
@@ -24,6 +25,11 @@ const PostDetail: FC = () => {
   const { data: postData } = useGetPostByIdQuery(postid as string);
   const { data: authorData } = useGetProfileUserQuery(userid);
   console.log(postData);
+  const date = moment(
+    postData?.createAt != postData?.updateAt
+      ? postData?.updateAt
+      : postData?.createAt
+  ).format("h:mm a, MMMM Do YYYY");
 
   const [deletePostMutation] = useDeletePostMutation();
 
@@ -66,7 +72,11 @@ const PostDetail: FC = () => {
               </button>
             </div>
             <div>
-              <Link to={config.routes.profileLink(params.userid as string)}>
+              <Link
+                to={config.routes.profileLink(
+                  convertId(params.userid as string)
+                )}
+              >
                 <div className="flex flex-1 items-center mt-6">
                   <div className="mr-3 overflow-hidden">
                     <img
@@ -78,17 +88,21 @@ const PostDetail: FC = () => {
                     />
                   </div>
                   <h2 className="font-semibold">{authorData?.name}</h2>
-                  <span className="ml-1">on</span>
-                  <span className="ml-1">Time dang loi chua chuyen duoc</span>
+                  <span className="ml-1">
+                    {postData?.createAt != postData?.updateAt
+                      ? "create post at"
+                      : "update post at"}
+                  </span>
+                  <span className="ml-1 font-semibold">{date}</span>
                 </div>
               </Link>
             </div>
           </div>
           <Wrapper>
-            <div>
+            <div className="h-[32rem]">
               <img
                 src={postData?.thumbnail}
-                className="block w-full max-h-72"
+                className="block w-full h-full "
                 alt=""
               />
             </div>
