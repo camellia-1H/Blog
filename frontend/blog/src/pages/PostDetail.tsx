@@ -1,18 +1,19 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
-import moment from "moment";
+import { useSelector } from "react-redux";
 
 import { config } from "../config";
 import Wrapper from "../components/Core/Wrapper";
 import { useDeletePostMutation, useGetPostByIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
-import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { convertId } from "../utils/convertId";
 import ModalEditPost from "../components/ModalEditPost";
+import { Post } from "../models/Post";
+import { convertTime } from "../utils/convertTime";
 
 const PostDetail: FC = () => {
   const params = useParams();
@@ -24,12 +25,8 @@ const PostDetail: FC = () => {
   const userid = convertId(params.userid as string);
   const { data: postData } = useGetPostByIdQuery(postid as string);
   const { data: authorData } = useGetProfileUserQuery(userid);
-  console.log(postData);
-  const date = moment(
-    postData?.createAt != postData?.updateAt
-      ? postData?.updateAt
-      : postData?.createAt
-  ).format("h:mm a, MMMM Do YYYY");
+
+  const date = convertTime(postData as Post);
 
   const [deletePostMutation] = useDeletePostMutation();
 

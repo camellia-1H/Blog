@@ -96,6 +96,8 @@ const postController = {
       const post = await prisma.post.findMany({
         where: {
           authorId: userid,
+        },orderBy: {
+          updateAt: "desc",
         },
       });
       return res.status(200).json(post);

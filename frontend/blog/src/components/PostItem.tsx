@@ -3,6 +3,7 @@ import { config } from "../config";
 import { Post } from "../models/Post";
 import { useGetProfileUserQuery } from "../redux/userApi";
 import moment from "moment";
+import { convertTime } from "../utils/convertTime";
 
 type Props = {
   post: Post;
@@ -11,9 +12,7 @@ type Props = {
 const PostItem = ({ post }: Props) => {
   const authorId = post.authorId as string;
   const { data: userData } = useGetProfileUserQuery(authorId);
-  const date = moment(
-    post.createAt != post.updateAt ? post.updateAt : post.createAt
-  ).format("h:mm a, MMMM Do YYYY");
+  const date = convertTime(post);
 
   // cái này định để làm là kiểu đăng cách mấy phút trước gì đấy ...
   const newDate = moment().format("h:mm a, MMMM Do YYYY");
