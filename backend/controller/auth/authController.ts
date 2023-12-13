@@ -1,12 +1,12 @@
 import { PrismaClient } from "@prisma/client";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 // import * as bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "./token";
 
 const prisma = new PrismaClient();
 
 const authController = {
-  register: async (req: Request, res: Response) => {
+  register: async (req: Request, res: Response, next : NextFunction) => {
     try {
       const { email } = req.body;
       let existUser = await prisma.user.findUnique({
@@ -33,10 +33,10 @@ const authController = {
       res.status(201).json(newUser);
     } catch (error) {
       // throw Error("khong the dang ki user");
-      console.log(error);
+    next(error)
     }
   },
-  login: async (req: Request, res: Response) => {
+  login: async (req: Request, res: Response, next : NextFunction) => {
     try {
       const { email, password } = req.body;
       let existUser = await prisma.user.findUnique({
@@ -52,9 +52,9 @@ const authController = {
         if (password == existUser.password) {
           res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
-            secure: false,
-            path: "/",
-            sameSite: "strict",
+            secure: true,
+            // path: "/",
+            // sameSite: "strict",
           });
           return res.status(200).json({ ...existUser, accessToken });
         } else {
@@ -64,10 +64,12 @@ const authController = {
         res.status(400).json("Sai email hoac password ");
       }
     } catch (error) {
-      return res.json(error);
+      next(error)
+      // return res.json(error);
     }
   },
   logout: async (req: Request, res: Response) => {
+    // res.clearCookie('refreshToken')
     res.clearCookie('refreshToken')
     res.status(200).json('Log out successfully')
   },

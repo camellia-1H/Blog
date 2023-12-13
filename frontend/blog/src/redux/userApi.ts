@@ -8,7 +8,10 @@ export const userApi = createApi({
     //query<kiểu trả về, tham số truyền vào>
     
     getProfileUser : build.query<User,string>({
-      query : (userid) => `user/${userid}`
+      query : (userid) => ({
+        url : `user/${userid}`,
+        // credentials :  'include'
+      })
     }),
     
   }),

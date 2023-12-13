@@ -1,27 +1,47 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Post } from "../models/Post";
 import { RootState } from "./store";
+import { JwtPayload, jwtDecode } from "jwt-decode";
+import { refreshToken } from "../service/axiosInstace";
 
 export const postApi = createApi({
   reducerPath: "postApi", // ten field trong redux state
   tagTypes: ["Posts", "post"],
   baseQuery: fetchBaseQuery({
     baseUrl: "http://localhost:8080/",
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: async (headers, { getState }) => {
       const accessToken = (getState() as RootState).user.user.accessToken;
+      const user = (getState() as RootState).user.user;
+
       if (accessToken) {
+        // jwt.verify(accessToken, "daylakeymahoaaccessToken");
+        const decodeToken = jwtDecode<JwtPayload>(accessToken);
+        let date = new Date();
+        console.log(decodeToken);
         headers.set("authorization", `Bearer ${accessToken}`);
-        // headers.set('content-type','application/json; charset=utf-8')
+        if ((decodeToken.exp as number) < date.getTime() / 1000) {
+          const resultRefreshToken = await refreshToken();
+          const newUser = {
+            ...user,
+            accessToken: resultRefreshToken.accessToken,
+          };
+          console.log(newUser);
+          headers.set("authorization", `Bearer ${accessToken}`);
+          // headers.set('content-type','application/json; charset=utf-8')
+        }
+
+        return headers;
       }
-      return headers;
     },
   }),
   endpoints: (build) => ({
     //query<kiểu trả về, tham số truyền vào>
     getAllPost: build.query<Post[], void>({
-      query: () => `post`,
+      query: () => ({
+        url : 'post',
+      }),
       providesTags: ["Posts"],
-      keepUnusedDataFor : 5000
+      keepUnusedDataFor: 5000,
     }),
     getPostById: build.query<Post, string>({
       query: (postid) => `post/${postid}`,
@@ -46,15 +66,15 @@ export const postApi = createApi({
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["post",'Posts'],
+      invalidatesTags: ["post", "Posts"],
     }),
     deletePost: build.mutation({
       query: ({ userid, postid }) => ({
         url: `user/${userid}/post/${postid}`,
         method: "DELETE",
       }),
-      invalidatesTags: ['Posts'],
-    })
+      invalidatesTags: ["Posts"],
+    }),
   }),
 });
 
@@ -64,5 +84,5 @@ export const {
   useGetPostByUserIdQuery,
   useCreatePostMutation,
   useUpdatePostMutation,
-  useDeletePostMutation
+  useDeletePostMutation,
 } = postApi;

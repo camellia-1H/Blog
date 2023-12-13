@@ -1,26 +1,31 @@
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
 import { config } from "../config";
 import { Link, useNavigate } from "react-router-dom";
-import { useTypedDispatch } from "../redux/store";
-import { userLogin } from "../redux/userReducer";
+import { useLoginMutation } from "../redux/authApi";
 
 const Login: FC = () => {
-  const dispatch = useTypedDispatch();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [isError, setIsError] = useState<boolean>(false);
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const result = await dispatch(userLogin({ email, password }));
-    if (result.payload?.id) {
+  const [loginUser, { isLoading, isError, error, isSuccess }] =
+    useLoginMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
       navigate("/");
-    } else {
-      setIsError(true);
     }
+    if (isError) {
+      console.log((error as any).data);
+    }
+  }, [isLoading]);
+
+  const handleLogin = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    loginUser({ email, password });
   };
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
@@ -79,9 +84,7 @@ const Login: FC = () => {
               </div>
             </div>
             {isError && (
-              <div className="text-red-400 text-xl">
-                Sai ten tai khoan hoac mat khau
-              </div>
+              <div className="text-red-400 text-xl">{(error as any).data}</div>
             )}
             <div>
               <button

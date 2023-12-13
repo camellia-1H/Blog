@@ -3,6 +3,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useCreatePostMutation } from "../redux/postApi";
 import { useNavigate } from "react-router-dom";
+import cloudinary from "../../cloudinary.config";
+import axios from "axios";
 
 const Upload: FC = () => {
   const authEmail = useSelector((state: RootState) => state.user.user.email);
@@ -13,6 +15,7 @@ const Upload: FC = () => {
   const [content, setContent] = useState<string>("");
   const [published, setPublished] = useState<boolean>(true);
   const [image, setImage] = useState<string>("");
+  const [uploadUrl, setUploadUrl] = useState("");
 
   const [uploadPostMutation, {}] = useCreatePostMutation();
 
@@ -23,10 +26,32 @@ const Upload: FC = () => {
       setImage(reader.result as string);
     };
   };
+
   const onFileChange = (e: any) => {
     const currentFile = e.target.files[0];
     setFileTobase(currentFile);
     console.log(currentFile);
+  };
+
+  const handelUploadImgCloud = async () => {
+    console.log("click");
+
+    try {
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dwnfc0zdt/image/upload`,
+        {
+          body: {
+            image,
+            upload_preset: "jlyvxvar",
+          },
+        }
+      );
+      console.log(response.data);
+
+      // setUploadUrl(response.secure_url);
+    } catch (error) {
+      console.error("Upload error:", error);
+    }
   };
 
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
@@ -62,6 +87,10 @@ const Upload: FC = () => {
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Upload Post
         </h2>
+        <h1>
+          {uploadUrl}
+          <button onClick={handelUploadImgCloud}>upload tesst</button>
+        </h1>
         <p className="mt-2 text-lg leading-8 text-gray-600">
           One post hay cho moi nguoi
         </p>
