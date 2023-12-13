@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
 const postController = {
-  getAllPost: async (req: Request, res: Response) => {
+  getAllPost: async (req: Request, res: Response) => {  
     try {
       const allPost = await prisma.post.findMany({
         where: {

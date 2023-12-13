@@ -1,13 +1,13 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { RootState, useTypedDispatch } from "../redux/store";
+import { RootState } from "../redux/store";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { userLogout } from "../redux/userReducer";
 import PostSearch from "../components/Search/PostSearch";
 import { useGetPostByUserIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
 import { convertId } from "../utils/convertId";
+import { useLogoutMutation } from "../redux/authApi";
 
 const Profile: FC = () => {
   const user = useSelector((state: RootState) => state.user.user);
@@ -15,13 +15,22 @@ const Profile: FC = () => {
   const { userid } = params;
   const idQuery = convertId(userid as string);
 
-  const dispatch = useTypedDispatch();
   const navigate = useNavigate();
-  const handleLogout = async () => {
-    try {
-      await dispatch(userLogout(user.accessToken));
+
+  const [logOutUser, { isLoading, isError, error, isSuccess }] =
+    useLogoutMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
       navigate("/login");
-    } catch (error) {}
+    }
+    if (isError) {
+      console.log((error as any).data);
+    }
+  }, [isLoading]);
+
+  const handleLogout = () => {
+    logOutUser(user.accessToken);
   };
 
   const { data: posts } = useGetPostByUserIdQuery(idQuery);

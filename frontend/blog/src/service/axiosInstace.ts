@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { useSelector } from "react-redux";
 import { JwtPayload } from "jsonwebtoken";
-import jwt_decode from "jwt-decode";
+import {jwtDecode} from "jwt-decode";
 
 import { RootState } from "../redux/store";
 
@@ -15,7 +15,7 @@ const createAxiosJWT = () => {
 
       const user = useSelector((state: RootState) => state.user.user);
       // jwt.verify(accessToken, "daylakeymahoaaccessToken");
-      const decodeToken = jwt_decode<JwtPayload>(accessToken);
+      const decodeToken = jwtDecode<JwtPayload>(accessToken);
       let date = new Date();
       console.log(decodeToken);
       if ((decodeToken.exp as number) < date.getTime() / 1000) {
@@ -37,7 +37,7 @@ const createAxiosJWT = () => {
   return axiosInstance;
 };
 
-const refreshToken = async () => {
+export const refreshToken = async () => {
   try {
     const res = await axios.post("http://localhost:8080/auth/refresh", {
       withCredentials: true,
