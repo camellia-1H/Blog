@@ -14,7 +14,7 @@ const ProtectedRoute = ({ user, children }: Props) => {
     if (!user.accessToken) {
       navigate("/login");
     }
-  }, [user]);
+  }, [user, user.accessToken]);
 
   return children;
 };

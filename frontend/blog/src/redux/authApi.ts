@@ -1,10 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { User } from "../models/User";
 import { userLogin, logOut } from "./userReducer";
+import { RootState } from "./store";
+import customFetchBase from "./customFetchBase";
 
 export const authApi = createApi({
   reducerPath: "authApi", // ten field trong redux state
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/" }),
+  baseQuery: customFetchBase,
   endpoints: (build) => ({
     //query<kiểu trả về, tham số truyền vào>
     login: build.mutation<User, Partial<User>>({
@@ -41,8 +43,23 @@ export const authApi = createApi({
         } catch (error) {}
       },
     }),
+    refreshToken : build.mutation<Partial<User>,void>({
+      query : () => ({
+        url : "auth/refresh",
+        method : 'POST',
+        credentials : 'include',
+      }),
+      async onQueryStarted(args, { dispatch, queryFulfilled,getState }) {
+        const user = (getState() as RootState).user.user
+        try {
+          const { data } = await queryFulfilled;
+          console.log(data);  
+          dispatch(userLogin({...user, data}));
+        } catch (error) {}
+      },
+    })
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation,useRefreshTokenMutation } =
   authApi;

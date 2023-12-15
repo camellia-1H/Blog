@@ -33,7 +33,7 @@ type Props = {
 ReactModal.setAppElement("div");
 
 const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
-  console.log(post);
+  // console.log(post);
 
   const [title, setTitle] = useState<string>(post?.title);
   const [content, setContent] = useState<string>(post?.content);
