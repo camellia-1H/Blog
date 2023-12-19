@@ -1,9 +1,10 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { User } from "../models/User";
+import customFetchBase from "./customFetchBase";
 
 export const userApi = createApi({
   reducerPath: "userApi", // ten field trong redux state
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/" }),
+  baseQuery: customFetchBase,
   endpoints: (build) => ({
     //query<kiểu trả về, tham số truyền vào>
     

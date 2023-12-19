@@ -5,6 +5,7 @@ import {jwtDecode} from "jwt-decode";
 
 import { RootState } from "../redux/store";
 
+//  ở đây khong dùng axios post mà dùng rtk query nên khong cần interceptor
 const createAxiosJWT = () => {
   const axiosInstance = axios.create();
   axiosInstance.interceptors.request.use(
@@ -36,7 +37,7 @@ const createAxiosJWT = () => {
   );
   return axiosInstance;
 };
-
+// khong cần dùng
 export const refreshToken = async () => {
   try {
     const res = await axios.post("http://localhost:8080/auth/refresh", {
@@ -47,5 +48,7 @@ export const refreshToken = async () => {
     console.log(err);
   }
 };
+
+
 
 export const axiosJWT = createAxiosJWT();

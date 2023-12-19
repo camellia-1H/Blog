@@ -1,39 +1,40 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { Post } from "../models/Post";
-import { RootState } from "./store";
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { refreshToken } from "../service/axiosInstace";
+import customFetchBase from "./customFetchBase";
 
 export const postApi = createApi({
   reducerPath: "postApi", // ten field trong redux state
   tagTypes: ["Posts", "post"],
-  baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8080/",
-    prepareHeaders: async (headers, { getState }) => {
-      const accessToken = (getState() as RootState).user.user.accessToken;
-      const user = (getState() as RootState).user.user;
+  // baseQuery: fetchBaseQuery({
+  //   baseUrl: "http://localhost:8080/",
+    // prepareHeaders: async (headers, { getState }) => {
+  //     const accessToken = (getState() as RootState).user.user.accessToken;
+  //     const user = (getState() as RootState).user.user;
 
-      if (accessToken) {
-        // jwt.verify(accessToken, "daylakeymahoaaccessToken");
-        const decodeToken = jwtDecode<JwtPayload>(accessToken);
-        let date = new Date();
-        console.log(decodeToken);
-        headers.set("authorization", `Bearer ${accessToken}`);
-        if ((decodeToken.exp as number) < date.getTime() / 1000) {
-          const resultRefreshToken = await refreshToken();
-          const newUser = {
-            ...user,
-            accessToken: resultRefreshToken.accessToken,
-          };
-          console.log(newUser);
-          headers.set("authorization", `Bearer ${accessToken}`);
-          // headers.set('content-type','application/json; charset=utf-8')
-        }
+  //     if (accessToken) {
+  //       // jwt.verify(accessToken, "daylakeymahoaaccessToken");
+  //       const decodeToken = jwtDecode<JwtPayload>(accessToken);
+  //       let date = new Date();
+  //       console.log(decodeToken);
+  //       headers.set("authorization", `Bearer ${accessToken}`);
+  //       if ((decodeToken.exp as number) < date.getTime() / 1000) {
+  //         // const resultRefreshToken = await refreshToken();
+  //         // const newUser = {
+  //         //   ...user,
+  //         //   accessToken: resultRefreshToken,
+  //         // };
+  //         // console.log(newUser);
+  //         console.log('nguu postApi');
+          
+  //         headers.set("authorization", `Bearer ${accessToken}`);
+  //         // headers.set('content-type','application/json; charset=utf-8')
+  //       }
 
-        return headers;
-      }
-    },
-  }),
+  //       return headers;
+  //     }
+  //   },
+  // }),
+  baseQuery: customFetchBase,
   endpoints: (build) => ({
     //query<kiểu trả về, tham số truyền vào>
     getAllPost: build.query<Post[], void>({
@@ -56,7 +57,6 @@ export const postApi = createApi({
         url: "post/upload",
         method: "POST",
         body: data, // body tự convert sang json
-        // headers: { Authorization: `Bearer ${accessToken}` },
       }),
       invalidatesTags: ["Posts"],
     }),
