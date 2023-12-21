@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, memo, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import { Post } from "../models/Post";
 import { useUpdatePostMutation } from "../redux/postApi";
@@ -38,10 +38,11 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
   const [title, setTitle] = useState<string>(post?.title);
   const [content, setContent] = useState<string>(post?.content);
   const [published, setPublished] = useState<boolean>(post?.published);
-  // const [image, setImage] = useState<string>(post?.thumbnail);
-  const [previewImage, setPreviewImage] = useState<string>("");
+  const [previewImage, setPreviewImage] = useState<null | string>(null);
+  const image = post?.thumbnail;
 
-  const [updatePostMutation] = useUpdatePostMutation();
+  const [updatePostMutation, { isLoading, isError, error, isSuccess }] =
+    useUpdatePostMutation();
 
   const setFileTobase = (file: File) => {
     const reader = new FileReader();
@@ -57,16 +58,26 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
     console.log(currentFile);
   };
 
-  const handleEditPost = async (e: FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (isSuccess) {
+    }
+    if (isError) {
+      console.log((error as any).data);
+    }
+  }, [isLoading, post]);
+
+  const handleEditPost = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log(previewImage ? previewImage : image);
+
     try {
-      await updatePostMutation({
+      updatePostMutation({
         userid: post?.authorId,
         postid: post?.id,
         title,
         content,
         published,
-        previewImage,
+        thumbnail: previewImage ? previewImage : image,
       });
       handleCloseModal();
     } catch (error) {
@@ -194,4 +205,4 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
   );
 };
 
-export default ModalEditPost;
+export default memo(ModalEditPost);

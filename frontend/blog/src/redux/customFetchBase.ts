@@ -50,7 +50,7 @@ const customFetchBase: BaseQueryFn<
         console.log(refreshResult.data);
 
         if (refreshResult.data) {
-          // Retry the initial query
+          // Retry the initial query, pin new accessToken to redux and query 
           api.dispatch(refreshToken(refreshResult.data.accessToken)),
             (result = await baseQuery(args, api, extraOptions));
         } else {

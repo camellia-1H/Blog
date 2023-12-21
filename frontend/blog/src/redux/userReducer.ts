@@ -15,7 +15,6 @@ const userSlice = createSlice({
       state.user = action.payload;
     },
     refreshToken: (state, action) => {
-      // console.log(action.payload);
       state.user.accessToken = action.payload;
     },
   },
