@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
 const postController = {
-  getAllPost: async (req: Request, res: Response) => {  
+  getAllPost: async (req: Request, res: Response) => {
     try {
       const allPost = await prisma.post.findMany({
         where: {
@@ -21,13 +21,13 @@ const postController = {
   },
   uploadPost: async (req: Request, res: Response) => {
     try {
-      const { title, content, authEmail, published, image } = req.body;
+      const { title, content, authEmail, published, uploadUrl } = req.body;
       const newPost = await prisma.post.create({
         data: {
           title,
           content,
           published,
-          thumbnail : image,
+          thumbnail: uploadUrl,
           author: {
             connect: {
               email: authEmail,
@@ -44,12 +44,12 @@ const postController = {
   deletePost: async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
-      const post = await prisma.post.delete({
+      await prisma.post.delete({
         where: {
           id,
         },
       });
-      return res.status(200).json('Delete post successfully');
+      return res.status(200).json("Delete post successfully");
     } catch (error) {
       return res.status(400).json(error);
     }
@@ -59,7 +59,7 @@ const postController = {
       const { id, userid } = req.params;
       console.log(userid);
 
-      const { title, content, published, previewImage } = req.body;
+      const { title, content, published, thumbnail } = req.body;
       const post = await prisma.post.update({
         where: {
           id,
@@ -68,7 +68,7 @@ const postController = {
           title,
           content,
           published: Boolean(published),
-          thumbnail : previewImage
+          thumbnail,
         },
       });
       return res.status(200).json(post);
@@ -96,7 +96,8 @@ const postController = {
       const post = await prisma.post.findMany({
         where: {
           authorId: userid,
-        },orderBy: {
+        },
+        orderBy: {
           updateAt: "desc",
         },
       });

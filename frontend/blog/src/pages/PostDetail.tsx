@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft } from "@fortawesome/free-solid-svg-icons";
@@ -28,7 +28,8 @@ const PostDetail: FC = () => {
 
   const date = convertTime(postData as Post);
 
-  const [deletePostMutation] = useDeletePostMutation();
+  const [deletePostMutation, { isLoading, isError, error, isSuccess }] =
+    useDeletePostMutation();
 
   const isAuthor = user.id == userid;
 
@@ -37,19 +38,19 @@ const PostDetail: FC = () => {
   const [modalIsOpen, setOpenModal] = useState<boolean>(false);
   const handleCloseModal = () => setOpenModal(false);
   const handleShowModal = () => setOpenModal(true);
-  const handleDeletePost = async () => {
-    try {
-      const result = await deletePostMutation({ userid, postid });
-      console.log(result);
-      if ("error" in result) {
-        alert(`Delete post unsuccessfull`);
-      } else {
-        alert("Delete post successfully");
-        navigate("/");
-      }
-    } catch (error) {
-      console.log(error);
+
+  useEffect(() => {
+    if (isSuccess) {
+      alert("Delete post successfully");
+      navigate("/");
     }
+    if (isError) {
+      alert(`Delete post unsuccessfull. Error : ${(error as any).data}`);
+    }
+  }, [isLoading]);
+
+  const handleDeletePost = () => {
+    deletePostMutation({ userid, postid });
   };
 
   return (

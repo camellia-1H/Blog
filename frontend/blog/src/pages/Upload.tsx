@@ -3,8 +3,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useCreatePostMutation } from "../redux/postApi";
 import { useNavigate } from "react-router-dom";
-import cloudinary from "../../cloudinary.config";
-import axios from "axios";
 
 const Upload: FC = () => {
   const authEmail = useSelector((state: RootState) => state.user.user.email);
@@ -15,7 +13,6 @@ const Upload: FC = () => {
   const [content, setContent] = useState<string>("");
   const [published, setPublished] = useState<boolean>(true);
   const [image, setImage] = useState<string>("");
-  const [uploadUrl, setUploadUrl] = useState("");
 
   const [uploadPostMutation, {}] = useCreatePostMutation();
 
@@ -33,40 +30,58 @@ const Upload: FC = () => {
     console.log(currentFile);
   };
 
-  const handelUploadImgCloud = async () => {
-    console.log("click");
+  // const myImage = cloudinary.image("sample/logo");
 
-    try {
-      const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/dwnfc0zdt/image/upload`,
-        {
-          body: {
-            image,
-            upload_preset: "jlyvxvar",
-          },
-        }
-      );
-      console.log(response.data);
+  const uploadToCloud = async () => {
+    const cloudName = "dwnfc0zdt";
+    const fd = new FormData();
+    if (image.length <= 0) {
+      alert("Nhập file ảnh");
+      return;
+    } else {
+      fd.append("upload_preset", "dqujmk7q");
+      fd.append("file", image);
+      fd.append("folder", "Blog");
 
-      // setUploadUrl(response.secure_url);
-    } catch (error) {
-      console.error("Upload error:", error);
+      try {
+        const uploadResponse = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          {
+            method: "POST",
+            body: fd,
+          }
+        );
+        const data = await uploadResponse.json();
+        return data;
+      } catch (error) {
+        console.error("Upload error:", error);
+      }
     }
   };
 
+  // vào đây tức là đồng ý upload ảnh đó rồi
+  // thì upload lên cloudinary rồi có link
+  // lấy link đó thêm vào body up theo backend
+
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      await uploadPostMutation({
-        title,
-        content,
-        authEmail,
-        published,
-        image,
-      });
-      navigate("/");
-    } catch (error) {
-      console.log(error);
+    const data = await uploadToCloud();
+    console.log(data);
+    // public_id
+
+    if (data) {
+      try {
+        await uploadPostMutation({
+          title,
+          content,
+          authEmail,
+          published,
+          uploadUrl: data.secure_url,
+        });
+        navigate("/");
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
   return (
@@ -87,15 +102,11 @@ const Upload: FC = () => {
         <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           Upload Post
         </h2>
-        <h1>
-          {uploadUrl}
-          <button onClick={handelUploadImgCloud}>upload tesst</button>
-        </h1>
         <p className="mt-2 text-lg leading-8 text-gray-600">
           One post hay cho moi nguoi
         </p>
       </div>
-      <form className="mx-auto mt-16 max-w-xl sm:mt-20" onSubmit={handlePost}>
+      <form className="mx-auto mt-16 max-w-xl sm:mt-16" onSubmit={handlePost}>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label
@@ -109,6 +120,7 @@ const Upload: FC = () => {
                 type="text"
                 name="title"
                 id="title"
+                required
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -189,6 +201,7 @@ const Upload: FC = () => {
                 name="content"
                 id="content"
                 rows={4}
+                required
                 className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 onChange={(e) => setContent(e.target.value)}
               />

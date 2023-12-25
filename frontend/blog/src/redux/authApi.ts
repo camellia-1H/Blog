@@ -43,23 +43,8 @@ export const authApi = createApi({
         } catch (error) {}
       },
     }),
-    refreshToken : build.mutation<Partial<User>,void>({
-      query : () => ({
-        url : "auth/refresh",
-        method : 'POST',
-        credentials : 'include',
-      }),
-      async onQueryStarted(args, { dispatch, queryFulfilled,getState }) {
-        const user = (getState() as RootState).user.user
-        try {
-          const { data } = await queryFulfilled;
-          console.log(data);  
-          dispatch(userLogin({...user, data}));
-        } catch (error) {}
-      },
-    })
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation, useLogoutMutation,useRefreshTokenMutation } =
+export const { useLoginMutation, useRegisterMutation, useLogoutMutation } =
   authApi;

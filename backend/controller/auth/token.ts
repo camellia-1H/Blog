@@ -8,7 +8,7 @@ const generateAccessToken = (user: any) => {
     },
     "daylakeymahoaaccessToken",
     {
-      expiresIn: "10s",
+      expiresIn: "100s",
     }
   );
   return accessToken;
