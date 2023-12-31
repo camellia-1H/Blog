@@ -15,12 +15,10 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(
-  cors({  origin: true,credentials: true})
-);
-app.use((req , res, next) => {
+app.use(cors({ origin: true, credentials: true }));
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Credentials", "true");
-  next()
+  next();
 });
 
 app.use("/auth", authRouter);

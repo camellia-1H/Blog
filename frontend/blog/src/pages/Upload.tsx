@@ -4,6 +4,8 @@ import { RootState } from "../redux/store";
 import { useCreatePostMutation } from "../redux/postApi";
 import { useNavigate } from "react-router-dom";
 
+import { uploadToCloud } from "../service/cloudinary/serviceCloudinary";
+
 const Upload: FC = () => {
   const authEmail = useSelector((state: RootState) => state.user.user.email);
 
@@ -18,9 +20,9 @@ const Upload: FC = () => {
 
   const setFileTobase = (file: File) => {
     const reader = new FileReader();
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(file); // base64
     reader.onloadend = () => {
-      setImage(reader.result as string);
+      setImage(reader.result as string); // base64
     };
   };
 
@@ -30,44 +32,9 @@ const Upload: FC = () => {
     console.log(currentFile);
   };
 
-  // const myImage = cloudinary.image("sample/logo");
-
-  const uploadToCloud = async () => {
-    const cloudName = "dwnfc0zdt";
-    const fd = new FormData();
-    if (image.length <= 0) {
-      alert("Nhập file ảnh");
-      return;
-    } else {
-      fd.append("upload_preset", "dqujmk7q");
-      fd.append("file", image);
-      fd.append("folder", "Blog");
-
-      try {
-        const uploadResponse = await fetch(
-          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
-          {
-            method: "POST",
-            body: fd,
-          }
-        );
-        const data = await uploadResponse.json();
-        return data;
-      } catch (error) {
-        console.error("Upload error:", error);
-      }
-    }
-  };
-
-  // vào đây tức là đồng ý upload ảnh đó rồi
-  // thì upload lên cloudinary rồi có link
-  // lấy link đó thêm vào body up theo backend
-
   const handlePost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = await uploadToCloud();
-    console.log(data);
-    // public_id
+    const data = await uploadToCloud(image);
 
     if (data) {
       try {

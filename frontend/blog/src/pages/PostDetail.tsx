@@ -10,10 +10,11 @@ import Wrapper from "../components/Core/Wrapper";
 import { useDeletePostMutation, useGetPostByIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
 import { RootState } from "../redux/store";
-import { convertId } from "../utils/convertId";
+import { convertId, convertPublicId } from "../utils/convertString";
 import ModalEditPost from "../components/ModalEditPost";
 import { Post } from "../models/Post";
 import { convertTime } from "../utils/convertTime";
+import { deleteImageFromCloudinary } from "../service/cloudinary/serviceCloudinary";
 
 const PostDetail: FC = () => {
   const params = useParams();
@@ -32,7 +33,6 @@ const PostDetail: FC = () => {
     useDeletePostMutation();
 
   const isAuthor = user.id == userid;
-
   /// modal edit post nếu đó là auth user
 
   const [modalIsOpen, setOpenModal] = useState<boolean>(false);
@@ -50,6 +50,7 @@ const PostDetail: FC = () => {
   }, [isLoading]);
 
   const handleDeletePost = () => {
+    deleteImageFromCloudinary(convertPublicId(postData?.thumbnail as string));
     deletePostMutation({ userid, postid });
   };
 

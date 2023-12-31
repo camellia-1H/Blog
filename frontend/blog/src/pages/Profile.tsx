@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import PostSearch from "../components/Search/PostSearch";
 import { useGetPostByUserIdQuery } from "../redux/postApi";
 import { useGetProfileUserQuery } from "../redux/userApi";
-import { convertId } from "../utils/convertId";
+import { convertId } from "../utils/convertString";
 import { useLogoutMutation } from "../redux/authApi";
 
 const Profile: FC = () => {

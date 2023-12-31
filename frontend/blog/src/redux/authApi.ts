@@ -1,7 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { User } from "../models/User";
 import { userLogin, logOut } from "./userReducer";
-import { RootState } from "./store";
 import customFetchBase from "./customFetchBase";
 
 export const authApi = createApi({
