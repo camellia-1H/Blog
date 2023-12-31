@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { useSelector } from "react-redux";
 import { JwtPayload } from "jsonwebtoken";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 import { RootState } from "../redux/store";
 
@@ -26,8 +26,10 @@ const createAxiosJWT = () => {
           accessToken: resultRefreshToken.accessToken,
         };
         console.log(newUser);
-        
-        config.headers["Authorization"] = `Bearer ${resultRefreshToken.accessToken}`;
+
+        config.headers[
+          "Authorization"
+        ] = `Bearer ${resultRefreshToken.accessToken}`;
       }
       return config;
     },

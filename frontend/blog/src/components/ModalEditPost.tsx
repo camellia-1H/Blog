@@ -2,6 +2,11 @@ import { FormEvent, memo, useEffect, useState } from "react";
 import ReactModal from "react-modal";
 import { Post } from "../models/Post";
 import { useUpdatePostMutation } from "../redux/postApi";
+import {
+  deleteImageFromCloudinary,
+  uploadToCloud,
+} from "../service/cloudinary/serviceCloudinary";
+import { convertPublicId } from "../utils/convertString";
 
 const customStyles = {
   pointerEvents: "none",
@@ -66,9 +71,17 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
     }
   }, [isLoading, post]);
 
-  const handleEditPost = (e: FormEvent<HTMLFormElement>) => {
+  let data = undefined as any;
+  // do flow nên khi up to cloud, setPreview lại khong được nên tạo global data
+
+  const handleEditPost = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(previewImage ? previewImage : image);
+    if (previewImage) {
+      deleteImageFromCloudinary(convertPublicId(image));
+      data = await uploadToCloud(previewImage);
+      console.log(data);
+      // setPreviewImage(data.secure_url)
+    }
 
     try {
       updatePostMutation({
@@ -77,7 +90,7 @@ const ModalEditPost = ({ modalIsOpen, handleCloseModal, post }: Props) => {
         title,
         content,
         published,
-        thumbnail: previewImage ? previewImage : image,
+        thumbnail: previewImage === null ? image : data.secure_url,
       });
       handleCloseModal();
     } catch (error) {
